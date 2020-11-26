@@ -20,6 +20,16 @@
 
         <div class="col-md-9">
             @Html.Partial("Partials/SearchForm", Model.SearchViewModel)
+
+            <p>Your search for <strong>@Model.SearchViewModel.Query</strong> returned these results:</p>
+
+            @if(Model.SearchResults != null && Model.SearchResults.Any())
+            {
+                foreach(var item in Model.SearchResults)
+                {
+                    <p><a href="@item.Url()">@item.Name</a></p>
+                }
+            }
         </div>
     </div>
 
