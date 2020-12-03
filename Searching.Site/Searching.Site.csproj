@@ -307,6 +307,7 @@
     <Compile Include="Composing\RegisterServiceComposer.cs" />
     <Compile Include="Controllers\SearchPageController.cs" />
     <Compile Include="Controllers\Surface\SearchSurfaceController.cs" />
+    <Compile Include="Extensions\StringArrayExtensions.cs" />
     <Compile Include="Models\SearchContentModel.cs" />
     <Compile Include="Models\ViewModels\SearchViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

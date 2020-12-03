@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Web;
+using Lucene.Net.Analysis;
+using Searching.Site.Extensions;
 
 namespace Searching.Site.Services
 {
@@ -46,11 +48,14 @@ namespace Searching.Site.Services
         {
             int skip = pageNumber > 1 ? (pageNumber - 1) * pageSize : 0;
 
-            if(ExamineManager.Instance.TryGetIndex("ExternalIndex", out var index))
+            string[] terms = !string.IsNullOrEmpty(searchTerm) && searchTerm.Contains(" ")
+                ? searchTerm.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                : !string.IsNullOrWhiteSpace(searchTerm) ? new string[] { searchTerm } : null;
+
+            if(terms != null && terms.Any() && ExamineManager.Instance.TryGetIndex("ExternalIndex", out var index))
             {
-                string[] terms = !string.IsNullOrEmpty(searchTerm) && searchTerm.Contains(" ")
-                    ? searchTerm.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                    : !string.IsNullOrWhiteSpace(searchTerm) ? new string[] { searchTerm } : null;
+                terms = terms.Where(x => !StopAnalyzer.ENGLISH_STOP_WORDS_SET.Contains(x.ToLower()) &&
+                    x.Length > 2).ToArray();
 
                 var searcher = index.GetSearcher();
                 var criteria = searcher.CreateQuery(searchType);
@@ -60,8 +65,20 @@ namespace Searching.Site.Services
                 if(terms != null && terms.Any())
                 {
                     query.And(q => q
+                    .GroupedOr(new[] { "nodeName" }, terms.Boost(12))
+                    .Or()
+                    .GroupedOr(new[] { "description" }, terms.Boost(10))
+                    .Or()
+                    .GroupedOr(new[] { "pageTitle" }, terms.Boost(8))
+                    .Or()
+                    .GroupedOr(new[] { "bodyText" }, terms.Boost(6))
+                    .Or()
+                    .GroupedOr(new[] { "seoMetaDescription" }, terms.Boost(4))
+                    .Or()
+                    .GroupedOr(new[] { "keywords" }, terms.Boost(2))
+                    .Or()
                     .GroupedOr(new[] { "nodeName", "pageTitle", "bodyText", "seoMetaDescription",
-                        "keywords" }, terms), BooleanOperation.Or);
+                        "keywords" }, terms.Fuzzy()), BooleanOperation.Or);
                 }
 
                 if(docTypeAliases != null && docTypeAliases.Any())
