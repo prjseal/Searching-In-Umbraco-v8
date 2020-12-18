@@ -6,7 +6,7 @@ using  Umbraco.Core.Models;
 using  Umbraco.Core.Models.PublishedContent;
 using  Umbraco.Web;
 using  Umbraco.ModelsBuilder.Embedded;
-[assembly:ModelsBuilderAssembly(PureLive = true, SourceHash = "ba58a8d9ce1f64b0")]
+[assembly:ModelsBuilderAssembly(PureLive = true, SourceHash = "248b4ff41aeacc73")]
 [assembly:System.Reflection.AssemblyVersion("0.0.0.1")]
 
 
@@ -667,7 +667,7 @@ namespace Umbraco.Web.PublishedModels
 
 	/// <summary>Content Page</summary>
 	[PublishedModel("contentPage")]
-	public partial class ContentPage : PublishedContentModel, IContentBase, INavigationBase
+	public partial class ContentPage : PublishedContentModel, ICategories, IContentBase, INavigationBase
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
@@ -689,6 +689,13 @@ namespace Umbraco.Web.PublishedModels
 		{ }
 
 		// properties
+
+		///<summary>
+		/// Category
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "8.9.1")]
+		[ImplementPropertyType("category")]
+		public global::System.Collections.Generic.IEnumerable<string> Category => global::Umbraco.Web.PublishedModels.Categories.GetCategory(this);
 
 		///<summary>
 		/// Content
@@ -817,7 +824,7 @@ namespace Umbraco.Web.PublishedModels
 
 	/// <summary>Blogpost</summary>
 	[PublishedModel("blogpost")]
-	public partial class Blogpost : PublishedContentModel, INavigationBase
+	public partial class Blogpost : PublishedContentModel, ICategories, INavigationBase
 	{
 		// helpers
 #pragma warning disable 0109 // new is redundant
@@ -867,6 +874,13 @@ namespace Umbraco.Web.PublishedModels
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "8.9.1")]
 		[ImplementPropertyType("pageTitle")]
 		public string PageTitle => this.Value<string>("pageTitle");
+
+		///<summary>
+		/// Category
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "8.9.1")]
+		[ImplementPropertyType("category")]
+		public global::System.Collections.Generic.IEnumerable<string> Category => global::Umbraco.Web.PublishedModels.Categories.GetCategory(this);
 
 		///<summary>
 		/// Keywords: Keywords that describe the content of the page. This is considered optional since most modern search engines don't use this anymore
@@ -1024,6 +1038,52 @@ namespace Umbraco.Web.PublishedModels
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "8.9.1")]
 		[ImplementPropertyType("umbracoNavihide")]
 		public bool UmbracoNavihide => global::Umbraco.Web.PublishedModels.NavigationBase.GetUmbracoNavihide(this);
+	}
+
+	// Mixin Content Type with alias "categories"
+	/// <summary>Categories</summary>
+	public partial interface ICategories : IPublishedContent
+	{
+		/// <summary>Category</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "8.9.1")]
+		global::System.Collections.Generic.IEnumerable<string> Category { get; }
+	}
+
+	/// <summary>Categories</summary>
+	[PublishedModel("categories")]
+	public partial class Categories : PublishedContentModel, ICategories
+	{
+		// helpers
+#pragma warning disable 0109 // new is redundant
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "8.9.1")]
+		public new const string ModelTypeAlias = "categories";
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "8.9.1")]
+		public new const PublishedItemType ModelItemType = PublishedItemType.Content;
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "8.9.1")]
+		public new static IPublishedContentType GetModelContentType()
+			=> PublishedModelUtility.GetModelContentType(ModelItemType, ModelTypeAlias);
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "8.9.1")]
+		public static IPublishedPropertyType GetModelPropertyType<TValue>(Expression<Func<Categories, TValue>> selector)
+			=> PublishedModelUtility.GetModelPropertyType(GetModelContentType(), selector);
+#pragma warning restore 0109
+
+		// ctor
+		public Categories(IPublishedContent content)
+			: base(content)
+		{ }
+
+		// properties
+
+		///<summary>
+		/// Category
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "8.9.1")]
+		[ImplementPropertyType("category")]
+		public global::System.Collections.Generic.IEnumerable<string> Category => GetCategory(this);
+
+		/// <summary>Static getter for Category</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "8.9.1")]
+		public static global::System.Collections.Generic.IEnumerable<string> GetCategory(ICategories that) => that.Value<global::System.Collections.Generic.IEnumerable<string>>("category");
 	}
 
 	/// <summary>Folder</summary>

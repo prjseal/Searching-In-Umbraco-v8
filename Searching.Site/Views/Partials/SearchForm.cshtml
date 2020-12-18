@@ -14,7 +14,7 @@
             <div class="form-group col-md-6">
                 @Html.LabelFor(m => m.Category)
                 <div class="input-group">
-                    @Html.TextBoxFor(m => m.Category, new { @class = "form-control", placeholder = "Category" })
+                    @Html.DropDownListFor(m => m.Category, Model.Categories, "All")
                     @Html.ValidationMessageFor(m => m.Category)
                 </div>
             </div>

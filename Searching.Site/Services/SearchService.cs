@@ -7,6 +7,7 @@ using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Web;
 using Lucene.Net.Analysis;
 using Searching.Site.Extensions;
+using static Umbraco.Core.Constants;
 
 namespace Searching.Site.Services
 {
@@ -24,7 +25,7 @@ namespace Searching.Site.Services
             int pageSize = 10)
         {
             var pageOfResults = GetPageOfSearchResults(searchTerm, category, pageNumber,
-                out totalItemCount, null, "content");
+                out totalItemCount, docTypeAliases, "content");
 
             var items = new List<IPublishedContent>();
             if(pageOfResults != null && pageOfResults.Any())
@@ -52,10 +53,13 @@ namespace Searching.Site.Services
                 ? searchTerm.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
                 : !string.IsNullOrWhiteSpace(searchTerm) ? new string[] { searchTerm } : null;
 
-            if(terms != null && terms.Any() && ExamineManager.Instance.TryGetIndex("ExternalIndex", out var index))
+            if(ExamineManager.Instance.TryGetIndex(UmbracoIndexes.ExternalIndexName, out var index))
             {
-                terms = terms.Where(x => !StopAnalyzer.ENGLISH_STOP_WORDS_SET.Contains(x.ToLower()) &&
-                    x.Length > 2).ToArray();
+                if(terms != null && terms.Any())
+                {
+                    terms = terms.Where(x => !StopAnalyzer.ENGLISH_STOP_WORDS_SET.Contains(x.ToLower()) &&
+                        x.Length > 2).ToArray();
+                }
 
                 var searcher = index.GetSearcher();
                 var criteria = searcher.CreateQuery(searchType);
